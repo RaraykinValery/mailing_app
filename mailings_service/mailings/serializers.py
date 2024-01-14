@@ -17,4 +17,4 @@ class ClientSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ["id", "start_date", "status", "mailing", "client"]
+        fields = ["id", "creation_date", "status", "mailing", "client"]
