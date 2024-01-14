@@ -26,17 +26,23 @@ class Client(models.Model):
     operator_code = models.CharField(
         "Код оператора",
         max_length=3,
-        editable=False)
+        editable=False
+    )
     tag = models.CharField(
         "Тэг",
         max_length=255,
-        blank=True)
+        blank=True
+    )
     timezone = models.CharField(
         "Часовой пояс",
         max_length=32,
         choices=TIMEZONES,
         default="UTS"
     )
+
+    def save(self, *args, **kwargs):
+        self.operator_code = self.phone_number[1:4]
+        super().save(*args, **kwargs)
 
 
 class Message(models.Model):
