@@ -1,11 +1,7 @@
-import json
-
 from django.db import models
 from django.core.validators import RegexValidator
 from django.utils import timezone
-from django.db.models.query_utils import Q
 import pytz
-import requests
 
 from mailings.services import start_mailing
 
