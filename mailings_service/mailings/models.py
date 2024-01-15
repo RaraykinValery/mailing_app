@@ -1,6 +1,13 @@
+import json
+
 from django.db import models
 from django.core.validators import RegexValidator
+from django.utils import timezone
+from django.db.models.query_utils import Q
 import pytz
+import requests
+
+from mailings.services import start_mailing
 
 
 TIMEZONES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
@@ -17,6 +24,14 @@ class Mailing(models.Model):
         "Фильтр свойств клиентов",
         max_length=255
     )
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        now = timezone.localtime()
+
+        if self.start_date <= now and self.stop_date > now:
+            start_mailing(mailing=self)
 
 
 class Client(models.Model):
@@ -54,6 +69,7 @@ class Client(models.Model):
 class Message(models.Model):
     creation_date = models.DateTimeField(
         "Дата и время создания сообщения",
+        auto_now_add=True,
         editable=False
     )
     status = models.IntegerField("Статус отправки")
