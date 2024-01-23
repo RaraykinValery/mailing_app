@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from django.utils import timezone
 import pytz
 
-from mailings.services import start_mailing
+from mailings.tasks import start_mailing
 
 
 TIMEZONES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
@@ -21,13 +21,21 @@ class Mailing(models.Model):
         max_length=255
     )
 
+    def __str__(self):
+        return (
+            f"{self.id} | "
+            f"{self.start_date.strftime('%m.%d|%H:%M')}"
+            f"-{self.stop_date.strftime('%m.%d|%H:%M')}, "
+            f"{self.filter}"
+        )
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
         now = timezone.localtime()
 
         if self.start_date <= now and self.stop_date > now:
-            start_mailing(mailing=self)
+            start_mailing.delay(mailing_id=self.id)
 
 
 class Client(models.Model):
@@ -57,9 +65,18 @@ class Client(models.Model):
         default="UTS"
     )
 
+    def __str__(self):
+        return f"{self.phone_number}"
+
     def save(self, *args, **kwargs):
         self.operator_code = self.phone_number[1:4]
         super().save(*args, **kwargs)
+
+
+class MessageStatus(models.TextChoices):
+    PENDING = "Pending"
+    DELIVERED = "Delivered"
+    ERROR = "Error"
 
 
 class Message(models.Model):
@@ -68,7 +85,9 @@ class Message(models.Model):
         auto_now_add=True,
         editable=False
     )
-    status = models.IntegerField("Статус отправки")
+    status = models.CharField("Статус отправки",
+                              choices=MessageStatus.choices,
+                              max_length=10)
     mailing = models.ForeignKey(
         Mailing,
         on_delete=models.CASCADE,
@@ -79,3 +98,11 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         blank=False
     )
+
+    def __str__(self):
+        return (
+            f"{self.id}, "
+            f"{self.client.phone_number} "
+            f"({self.mailing.filter}"
+            f", {self.status})"
+        )
