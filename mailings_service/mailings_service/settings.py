@@ -143,6 +143,8 @@ CELERY_RESULT_BACKEND = os.environ.get(
     "CELERY_BACKEND", "redis://redis:6379/0"
 )
 
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 REST_FRAMEWORK = {
     'SWAGGER_UI_DIST': 'SIDECAR',
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
@@ -153,5 +155,5 @@ REST_FRAMEWORK = {
 }
 
 
-SENDER_HOST = os.environ.get("SENDER_HOST")
-MAILING_TOKEN = os.environ.get("MAILING_TOKEN")
+SENDER_HOST = os.environ.get("SENDER_HOST", "probe.fbrq.cloud")
+MAILING_TOKEN = os.environ.get("MAILING_TOKEN", "")
