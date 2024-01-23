@@ -28,7 +28,7 @@ SECRET_KEY = (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -85,8 +85,11 @@ WSGI_APPLICATION = "mailings_service.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": os.environ.get("DB_HOST"),
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASS"),
     }
 }
 
@@ -134,10 +137,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 CELERY_BROKER_URL = os.environ.get(
-    "CELERY_BROKER", "redis://127.0.0.1:6379/0"
+    "CELERY_BROKER", "redis://redis:6379/0"
 )
 CELERY_RESULT_BACKEND = os.environ.get(
-    "CELERY_BACKEND", "redis://127.0.0.1:6379/0"
+    "CELERY_BACKEND", "redis://redis:6379/0"
 )
 
 REST_FRAMEWORK = {
@@ -150,5 +153,5 @@ REST_FRAMEWORK = {
 }
 
 
-SENDER_HOST = "probe.fbrq.cloud"
+SENDER_HOST = os.environ.get("SENDER_HOST")
 MAILING_TOKEN = os.environ.get("MAILING_TOKEN")

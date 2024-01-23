@@ -1,0 +1,64 @@
+services:
+
+  mailings-service:
+    container_name: mailings-service
+    build:
+      context: ./mailings_service
+    ports:
+      - 8000:8000
+    environment:
+      - SENDER_HOST="probe.fbrq.cloud"
+      - MAILING_TOKEN=""
+      - DB_HOST=database
+      - DB_NAME=dbname
+      - DB_USER=dbuser
+      - DB_PASS=pass
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14.6-alpine
+    environment:
+      - POSTGRES_DB=dbname
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=pass
+
+  redis:
+    image: redis:latest
+    hostname: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+
+  worker:
+    build:
+      context: ./mailings_service
+    hostname: worker
+    entrypoint: celery
+    command: -A mailings_service worker --loglevel=info
+    links:
+      - redis
+    depends_on:
+      - redis
+      - database
+    environment:
+      - DB_HOST=database
+      - DB_NAME=dbname
+      - DB_USER=dbuser
+      - DB_PASS=pass
+
+
+  celery-beat:
+    build:
+      context: ./mailings_service
+    hostname: celery-beat
+    entrypoint: celery
+    command: -A mailings_service beat --loglevel=info
+    volumes:
+      - ./mailing:/mailing
+    links:
+      - redis
+    depends_on:
+      - redis
