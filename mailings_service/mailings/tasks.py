@@ -9,7 +9,7 @@ from mailings_service.celery import app
 from mailings import services
 
 
-@app.on_after_configure.connect
+@app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
         5.0,
