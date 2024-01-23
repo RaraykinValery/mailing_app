@@ -25,8 +25,6 @@ def send_request(mailing, client, message):
         "text": mailing.text,
     }
 
-    print("Sending message: ", request_data)
-
     response = requests.post(
         (
             f"https://{settings.SENDER_HOST}"
