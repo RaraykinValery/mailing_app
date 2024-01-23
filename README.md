@@ -14,17 +14,20 @@ git clone https://github.com/RaraykinValery/mailing_app.git
 ```bash
 cd mailing_app
 ```
+4. Откройте файл mailings_service/mailings_service/settings.py и
+добавьте свой токен для сервиса отправки сообщений в константу MAILING_TOKEN.
 
-4. Запустите приложение с помощью Docker Compose:
+5. Запустите приложение с помощью Docker Compose:
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
-Опция -d запускает контейнеры в фоновом режиме.
 
 После успешного запуска, приложение будет доступно по адресу http://127.0.0.1:8000.
 
-5. Остановка проекта
+По адресу http://127.0.0.1:8000/docs/ откроется страница со Swagger UI
+
+6. Остановка проекта
 
 Для остановки приложения выполните следующую команду в корневой директории проекта:
 
