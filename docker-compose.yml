@@ -7,8 +7,6 @@ services:
     ports:
       - 8000:8000
     environment:
-      - SENDER_HOST="probe.fbrq.cloud"
-      - MAILING_TOKEN=""
       - DB_HOST=database
       - DB_NAME=dbname
       - DB_USER=dbuser
@@ -62,3 +60,9 @@ services:
       - redis
     depends_on:
       - redis
+      - database
+    environment:
+      - DB_HOST=database
+      - DB_NAME=dbname
+      - DB_USER=dbuser
+      - DB_PASS=pass
