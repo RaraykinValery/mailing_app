@@ -43,6 +43,8 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "django_celery_beat",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
 
     "mailings.apps.MailingsConfig",
 ]
@@ -142,6 +144,10 @@ SENDER_HOST = "127.0.0.1"
 SENDER_PORT = "3000"
 
 REST_FRAMEWORK = {
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
