@@ -1,37 +1,44 @@
 import json
-import os
 
-from django.db.models.query_utils import Q
+from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 import requests
 
 
-def start_mailing(mailing):
-    from mailings.models import Client, Message
+def create_or_get_message(mailing, client):
+    from mailings.models import Message, MessageStatus
 
-    clients_to_send = Client.objects.filter(
-        Q(operator_code=mailing.filter) | Q(tag=mailing.filter)
+    try:
+        message = Message.objects.get(
+            mailing_id=mailing.id, client_id=client.id)
+    except ObjectDoesNotExist:
+        message = Message.objects.create(
+            status=MessageStatus.PENDING, mailing=mailing, client=client)
+
+    return message
+
+
+def send_request(mailing, client, message):
+    request_data = {
+        "id": message.id,
+        "phone": int(client.phone_number),
+        "text": mailing.text,
+    }
+
+    print("Sending message: ", request_data)
+
+    response = requests.post(
+        (
+            f"http://{settings.SENDER_HOST}:{settings.SENDER_PORT}"
+            f"/v1/send/{message.id}"
+        ),
+        data=json.dumps(request_data),
+        headers={
+            "Content-Type": "application/json",
+            # "Authorization": f"Bearer {TOKEN}",
+        },
+        timeout=9
     )
+    response.raise_for_status()
 
-    for client in clients_to_send:
-        data = {
-            "id": client.id,
-            "phone": int(client.phone_number),
-            "text": mailing.text,
-        }
-
-        print("Sending message: ", data)
-
-        response = requests.post(
-            f"http://{os.environ['SENDER_HOST']}:{os.environ['SENDER_PORT']}/",
-            data=json.dumps(data),
-            headers={
-                "Content-Type": "application/json",
-                # "Authorization": f"Bearer {TOKEN}",
-            },
-        )
-
-        print(response.content)
-
-        Message.objects.create(
-            status=response.status_code, mailing=mailing, client=client
-        )
+    return response.json()
