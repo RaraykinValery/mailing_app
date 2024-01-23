@@ -54,8 +54,6 @@ services:
     hostname: celery-beat
     entrypoint: celery
     command: -A mailings_service beat --loglevel=info
-    volumes:
-      - ./mailing:/mailing
     links:
       - redis
     depends_on:
