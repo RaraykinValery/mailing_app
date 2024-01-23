@@ -1,8 +1,5 @@
 #!/bin/sh
 
-echo "Apply database migrations"
-python manage.py migrate
-
 host="database"
 port="5432"
 
@@ -14,6 +11,9 @@ while true; do
 done
 
 echo "Database is up"
+
+echo "Apply database migrations"
+python manage.py migrate
 
 exec "$@"
 
