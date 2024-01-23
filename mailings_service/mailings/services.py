@@ -29,13 +29,13 @@ def send_request(mailing, client, message):
 
     response = requests.post(
         (
-            f"http://{settings.SENDER_HOST}:{settings.SENDER_PORT}"
+            f"https://{settings.SENDER_HOST}"
             f"/v1/send/{message.id}"
         ),
         data=json.dumps(request_data),
         headers={
             "Content-Type": "application/json",
-            # "Authorization": f"Bearer {TOKEN}",
+            "Authorization": f"Bearer {settings.MAILING_TOKEN}",
         },
         timeout=9
     )

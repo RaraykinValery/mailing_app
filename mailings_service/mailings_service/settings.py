@@ -140,9 +140,6 @@ CELERY_RESULT_BACKEND = os.environ.get(
     "CELERY_BACKEND", "redis://127.0.0.1:6379/0"
 )
 
-SENDER_HOST = "127.0.0.1"
-SENDER_PORT = "3000"
-
 REST_FRAMEWORK = {
     'SWAGGER_UI_DIST': 'SIDECAR',
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
@@ -151,3 +148,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+
+SENDER_HOST = "probe.fbrq.cloud"
+MAILING_TOKEN = os.environ.get("MAILING_TOKEN")
