@@ -1,4 +1,5 @@
 import json
+import time
 
 from celery import shared_task
 from celery_singleton import Singleton
@@ -29,7 +30,8 @@ def check_mailings():
         start_date__lt=now, stop_date__gt=now)
 
     for mailing in active_mailings:
-        start_mailing.delay(mailing_id=mailing.id)
+        start_mailing.apply_async((mailing.id,),
+                                  expires=mailing.stop_date)
 
 
 @shared_task(base=Singleton)
@@ -46,12 +48,15 @@ def start_mailing(mailing_id):
     print(clients_to_send)
 
     for client in clients_to_send:
-        send_client_message.delay(mailing_id=mailing.id, client_id=client.id)
+        send_client_message.apply_async((mailing.id, client.id),
+                                        expires=mailing.stop_date)
 
 
 @shared_task(base=Singleton)
 def send_client_message(mailing_id, client_id):
     from mailings.models import Client, Message, Mailing, MessageStatus
+
+    time.sleep(120)
 
     mailing = Mailing.objects.filter(id=mailing_id).first()
     client = Client.objects.filter(id=client_id).first()
