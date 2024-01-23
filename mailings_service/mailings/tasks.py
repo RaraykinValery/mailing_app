@@ -1,5 +1,4 @@
 import json
-import time
 
 from celery import shared_task
 from celery_singleton import Singleton
@@ -55,8 +54,6 @@ def start_mailing(mailing_id):
 @shared_task(base=Singleton)
 def send_client_message(mailing_id, client_id):
     from mailings.models import Client, Message, Mailing, MessageStatus
-
-    time.sleep(120)
 
     mailing = Mailing.objects.filter(id=mailing_id).first()
     client = Client.objects.filter(id=client_id).first()
