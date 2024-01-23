@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "rest_framework",
+    "django_celery_beat",
 
     "mailings.apps.MailingsConfig",
 ]
@@ -111,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Moscow"
 
 USE_I18N = True
 
@@ -127,3 +129,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+CELERY_BROKER_URL = os.environ.get(
+    "CELERY_BROKER", "redis://127.0.0.1:6379/0"
+)
+CELERY_RESULT_BACKEND = os.environ.get(
+    "CELERY_BACKEND", "redis://127.0.0.1:6379/0"
+)
+
+SENDER_HOST = "127.0.0.1"
+SENDER_PORT = "3000"
