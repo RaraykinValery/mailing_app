@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.utils import timezone
+from django.db.models import Count
 import pytz
 
 from mailings.tasks import start_mailing
@@ -20,6 +21,14 @@ class Mailing(models.Model):
         "Фильтр свойств клиентов",
         max_length=255
     )
+
+    def total_messages(self):
+        return self.message_set.count()
+
+    def messages_by_status(self):
+        return self.message_set.values("status").annotate(
+            messages_count=Count("id")
+        )
 
     def __str__(self):
         return (
