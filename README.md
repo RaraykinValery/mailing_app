@@ -7,7 +7,7 @@
 2. Склонируйте репозиторий на свой локальный компьютер:
 
 ```bash
-git clone https://github.com/RaraykinValery/mailing_app.git
+git clone https://gitlab.com/RaraykinValery/mailing_app.git
 ```
 3. Перейдите в папку с проектом:
 
